@@ -26,6 +26,7 @@ import android.util.Log;
 import java.util.Locale;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.content.data.Track;
 import de.dennisguse.opentracks.content.provider.ContentProviderUtils;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.stats.TripStatistics;
@@ -203,7 +204,8 @@ public class AnnouncementPeriodicTask implements PeriodicTask {
 
     private String getAnnouncement(TripStatistics tripStatistics) {
         boolean metricUnits = PreferencesUtils.isMetricUnits(context);
-        String category = contentProviderUtils.getTrack(PreferencesUtils.getRecordingTrackId(context)).getCategory();
+        Track track = contentProviderUtils.getTrack(PreferencesUtils.getRecordingTrackId(context));
+        String category = track != null ? track.getCategory() : "";
         boolean reportSpeed = PreferencesUtils.isReportSpeed(context, category);
         double distance = tripStatistics.getTotalDistance() * UnitConversions.M_TO_KM;
         double distancePerTime = tripStatistics.getAverageMovingSpeed() * UnitConversions.MS_TO_KMH;
