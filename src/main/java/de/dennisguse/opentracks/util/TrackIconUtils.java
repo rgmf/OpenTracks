@@ -192,4 +192,19 @@ public class TrackIconUtils {
         }
         return false;
     }
+
+    /**
+     * Returns true if category is a RUN or WALK  one. Returns false otherwise.
+     *
+     * @param context  the context.
+     * @param category the name of the category, activity type.
+     */
+    public static boolean isSpeedIcon(Context context, String category) {
+        String icon = getIconValue(context, category);
+        if (icon.equals(RUN) || icon.equals(WALK)) {
+            return false;
+        }
+
+        return true;
+    }
 }

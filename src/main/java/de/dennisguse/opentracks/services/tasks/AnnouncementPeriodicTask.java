@@ -26,6 +26,7 @@ import android.util.Log;
 import java.util.Locale;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.content.provider.ContentProviderUtils;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.stats.TripStatistics;
 import de.dennisguse.opentracks.util.PreferencesUtils;
@@ -49,6 +50,8 @@ public class AnnouncementPeriodicTask implements PeriodicTask {
     private final Context context;
 
     private final AudioManager audioManager;
+
+    private ContentProviderUtils contentProviderUtils;
 
     private final AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
@@ -106,6 +109,7 @@ public class AnnouncementPeriodicTask implements PeriodicTask {
     AnnouncementPeriodicTask(Context context) {
         this.context = context;
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        contentProviderUtils = new ContentProviderUtils(context);
     }
 
     @Override
@@ -199,7 +203,8 @@ public class AnnouncementPeriodicTask implements PeriodicTask {
 
     private String getAnnouncement(TripStatistics tripStatistics) {
         boolean metricUnits = PreferencesUtils.isMetricUnits(context);
-        boolean reportSpeed = PreferencesUtils.isReportSpeed(context);
+        String category = contentProviderUtils.getTrack(PreferencesUtils.getRecordingTrackId(context)).getCategory();
+        boolean reportSpeed = PreferencesUtils.isReportSpeed(context, category);
         double distance = tripStatistics.getTotalDistance() * UnitConversions.M_TO_KM;
         double distancePerTime = tripStatistics.getAverageMovingSpeed() * UnitConversions.MS_TO_KMH;
 
