@@ -449,4 +449,5 @@
     <string name="waypoint_type_waterfall">cascada</string>
     <string name="waypoint_type_water_fountain">fuente de agua</string>
     <string name="waypoint_type_waypoint">Punto de ruta</string>
+    <string name="menu_insert_gallery_img">Insertar imagen de la galería</string>
 </resources>

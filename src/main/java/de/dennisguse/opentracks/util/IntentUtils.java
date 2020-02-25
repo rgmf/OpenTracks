@@ -31,6 +31,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.content.DescriptionGenerator;
@@ -176,5 +177,23 @@ public class IntentUtils {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 .putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
         return new Pair<>(intent, photoUri);
+    }
+
+    /**
+     * Sends a pick picture request to the Gallery.
+     *
+     * @param context the context.
+     * @param trackId the track id.
+     * @return        returns a pair: the intent and the path where picture will be saved.
+     */
+    public static Pair<Intent, String> createGalleryImgIntent(Context context, long trackId) {
+        File dir = FileUtils.getPhotoDir(context, trackId);
+
+        String fileName = SimpleDateFormat.getDateTimeInstance().format(new Date());
+        File file = new File(dir, FileUtils.buildUniqueFileName(dir, fileName, JPEG_EXTENSION));
+
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+
+        return new Pair<>(intent, file.getAbsolutePath());
     }
 }

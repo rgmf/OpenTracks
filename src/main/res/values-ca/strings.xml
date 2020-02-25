@@ -449,4 +449,5 @@ es vegi el cel. Torneu-ho a provar més tard.</string>
     <string name="waypoint_type_waterfall">salt d\'aigua</string>
     <string name="waypoint_type_water_fountain">font d\'aigua</string>
     <string name="waypoint_type_waypoint">punt de ruta</string>
+    <string name="menu_insert_gallery_img">Insereix una foto de la galeria</string>
 </resources>
