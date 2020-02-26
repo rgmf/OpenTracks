@@ -25,6 +25,7 @@ import android.util.Log;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -208,6 +209,7 @@ public class FileUtils {
     }
 
     /**
+<<<<<<< HEAD
      * Return the real path from a Uri.
      *
      * @param context    the Context.
@@ -225,13 +227,13 @@ public class FileUtils {
     }
 
     /**
-     * Copy the src file to dst file.
+     * Copy a FileDescriptor (src) to a File (dst).
      *
      * @param src source file.
      * @param dst destination file.
      * @throws IOException
      */
-    public static void copy(File src, File dst) throws IOException {
+    public static void copy(FileDescriptor src, File dst) throws IOException {
         FileChannel in = new FileInputStream(src).getChannel();
         FileChannel out = new FileOutputStream(dst).getChannel();
 
