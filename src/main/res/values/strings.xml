@@ -284,6 +284,7 @@ limitations under the License.
     <string name="marker_name_format">Marker %1$d</string>
     <string name="marker_split_name_format">Split %1$d</string>
     <string name="marker_title">%1$d of %2$d</string>
+    <string name="marker_select_capture_image">Select capture image</string>
     <!-- Marker Detail -->
     <string name="marker_detail_statistics_title">Since last split marker:</string>
     <!-- Marker Edit -->
@@ -305,6 +306,7 @@ limitations under the License.
     <string name="menu_import_all">Import all</string>
     <string name="menu_insert_marker">Insert marker</string>
     <string name="menu_insert_photo">Insert photo</string>
+    <string name="menu_insert_gallery_img">Insert gallery image</string>
     <string name="menu_map">Map</string>
     <string name="menu_markers">Markers</string>
     <string name="menu_play">Play</string>

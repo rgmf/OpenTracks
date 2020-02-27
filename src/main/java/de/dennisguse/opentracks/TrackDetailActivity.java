@@ -24,7 +24,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +43,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.File;
+import java.io.FileDescriptor;
+
 import de.dennisguse.opentracks.content.TrackDataHub;
 import de.dennisguse.opentracks.content.data.Track;
 import de.dennisguse.opentracks.content.data.Waypoint;
@@ -51,6 +56,7 @@ import de.dennisguse.opentracks.fragments.ConfirmDeleteDialogFragment;
 import de.dennisguse.opentracks.fragments.StatsFragment;
 import de.dennisguse.opentracks.services.TrackRecordingServiceConnection;
 import de.dennisguse.opentracks.settings.SettingsActivity;
+import de.dennisguse.opentracks.util.FileUtils;
 import de.dennisguse.opentracks.util.IntentUtils;
 import de.dennisguse.opentracks.util.PreferencesUtils;
 import de.dennisguse.opentracks.util.TrackIconUtils;
@@ -74,6 +80,7 @@ public class TrackDetailActivity extends AbstractListActivity implements ChooseA
     private static final String HAS_PHOTO_KEY = "has_photo_key";
 
     private static final int CAMERA_REQUEST_CODE = 5;
+    private static final int GALLERY_IMG_REQUEST_CODE = 7;
     private static final int EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 6;
 
     // The following are set in onCreate
@@ -149,6 +156,7 @@ public class TrackDetailActivity extends AbstractListActivity implements ChooseA
 
     private MenuItem insertMarkerMenuItem;
     private MenuItem insertPhotoMenuItem;
+    private MenuItem insertGalleryImgMenuItem;
     private MenuItem markerListMenuItem;
     private MenuItem shareMenuItem;
 
@@ -321,7 +329,27 @@ public class TrackDetailActivity extends AbstractListActivity implements ChooseA
                 Toast.makeText(this, R.string.marker_add_canceled, Toast.LENGTH_LONG).show();
                 return;
             }
+
             hasPhoto = resultCode == RESULT_OK;
+        } else if (requestCode == GALLERY_IMG_REQUEST_CODE) {
+            if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, R.string.marker_add_canceled, Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Uri srcUri = data.getData();
+            try (ParcelFileDescriptor parcelFd = getContentResolver().openFileDescriptor(srcUri, "r")) {
+                FileDescriptor srcFd = parcelFd.getFileDescriptor();
+                File dstFile = new File(FileUtils.getImageUrl(this, trackId));
+                FileUtils.copy(srcFd, dstFile);
+
+                photoUri = FileUtils.getUriForFile(this, dstFile);
+                hasPhoto = true;
+            } catch(Exception e) {
+                Log.e(TAG, e.getMessage());
+                Toast.makeText(this, R.string.marker_add_canceled, Toast.LENGTH_LONG).show();
+                return;
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -345,6 +373,7 @@ public class TrackDetailActivity extends AbstractListActivity implements ChooseA
         insertMarkerMenuItem = menu.findItem(R.id.track_detail_insert_marker);
         insertPhotoMenuItem = menu.findItem(R.id.track_detail_insert_photo);
         insertPhotoMenuItem.setVisible(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).resolveActivity(getPackageManager()) != null);
+        insertGalleryImgMenuItem = menu.findItem(R.id.track_detail_insert_gallery_img);
         shareMenuItem = menu.findItem(R.id.track_detail_share);
         markerListMenuItem = menu.findItem(R.id.track_detail_markers);
 
@@ -374,6 +403,9 @@ public class TrackDetailActivity extends AbstractListActivity implements ChooseA
                 return true;
             case R.id.track_detail_insert_photo:
                 createWaypointWithPicture();
+                return true;
+            case R.id.track_detail_insert_gallery_img:
+                createWaypointWithGalleryImg();
                 return true;
             case R.id.track_detail_menu_show_on_map:
                 IntentUtils.showTrackOnMap(this, new long[]{trackId});
@@ -472,6 +504,7 @@ public class TrackDetailActivity extends AbstractListActivity implements ChooseA
     private void updateMenuItems(boolean isPaused) {
         insertMarkerMenuItem.setVisible(isRecording() && !isPaused);
         insertPhotoMenuItem.setVisible(hasCamera && isRecording() && !isPaused);
+        insertGalleryImgMenuItem.setVisible(isRecording() && !isPaused);
         shareMenuItem.setVisible(!isRecording());
         markerListMenuItem.setShowAsAction(isRecording() ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_IF_ROOM);
         String title;
@@ -488,6 +521,11 @@ public class TrackDetailActivity extends AbstractListActivity implements ChooseA
         Pair<Intent, Uri> intentAndPhotoUri = IntentUtils.createTakePictureIntent(this, trackId);
         photoUri = intentAndPhotoUri.second;
         startActivityForResult(intentAndPhotoUri.first, CAMERA_REQUEST_CODE);
+    }
+
+    private void createWaypointWithGalleryImg() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, GALLERY_IMG_REQUEST_CODE);
     }
 
     public void chooseActivityType(String category) {
