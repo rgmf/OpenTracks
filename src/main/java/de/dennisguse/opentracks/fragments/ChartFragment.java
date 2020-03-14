@@ -79,6 +79,7 @@ public class ChartFragment extends Fragment implements TrackDataListener {
     private boolean metricUnits = true;
     private boolean reportSpeed = true;
     private int recordingDistanceInterval;
+    private String category = "";
 
     // Modes of operation
     private boolean chartByDistance;
@@ -109,7 +110,7 @@ public class ChartFragment extends Fragment implements TrackDataListener {
                 }
             }
             if (PreferencesUtils.isKey(getContext(), R.string.stats_rate_key, key)) {
-                boolean speed = PreferencesUtils.isReportSpeed(getContext());
+                boolean speed = PreferencesUtils.isReportSpeed(getContext(), category);
                 if (reportSpeed != speed) {
                     reportSpeed = speed;
                     chartView.setReportSpeed(reportSpeed);
@@ -202,8 +203,10 @@ public class ChartFragment extends Fragment implements TrackDataListener {
         if (isResumed()) {
             if (track == null || track.getTripStatistics() == null) {
                 startTime = -1L;
+                category = "";
                 return;
             }
+            category = track.getCategory();
             startTime = track.getTripStatistics().getStartTime();
         }
     }
