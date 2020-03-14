@@ -38,54 +38,22 @@ import de.dennisguse.opentracks.R;
  */
 public class TrackIconUtils {
 
-    private static final String AIRPLANE = "AIRPLANE";
-    private static final String BIKE = "BIKE";
-    private static final String BOAT = "BOAT";
-    private static final String DRIVE = "DRIVE";
-    private static final String RUN = "RUN";
-    private static final String SKI = "SKI";
-    private static final String SNOW_BOARDING = "SNOW_BOARDING";
-    private static final String UNKNOWN = "UNKNOWN";
-    private static final String WALK = "WALK";
-
     private static final int ACTIVITY_UNKNOWN_LOGO = R.drawable.ic_logo_white_24dp;
-
-    private static final int[] AIRPLANE_LIST = new int[]{R.string.activity_type_airplane, R.string.activity_type_commercial_airplane, R.string.activity_type_rc_airplane};
-    private static final int[] BIKE_LIST = new int[]{R.string.activity_type_biking, R.string.activity_type_cycling, R.string.activity_type_dirt_bike, R.string.activity_type_motor_bike, R.string.activity_type_mountain_biking, R.string.activity_type_road_biking, R.string.activity_type_track_cycling};
-    private static final int[] BOAT_LIST = new int[]{R.string.activity_type_boat, R.string.activity_type_ferry, R.string.activity_type_motor_boating, R.string.activity_type_rc_boat};
-    private static final int[] DRIVE_LIST = new int[]{R.string.activity_type_atv, R.string.activity_type_driving, R.string.activity_type_driving_bus, R.string.activity_type_driving_car};
-    private static final int[] RUN_LIST = new int[]{R.string.activity_type_running, R.string.activity_type_street_running, R.string.activity_type_track_running, R.string.activity_type_trail_running};
-    private static final int[] SKI_LIST = new int[]{R.string.activity_type_cross_country_skiing, R.string.activity_type_skiing};
-    private static final int[] SNOW_BOARDING_LIST = new int[]{R.string.activity_type_snow_boarding};
-    private static final int[] WALK_LIST = new int[]{R.string.activity_type_hiking, R.string.activity_type_off_trail_hiking, R.string.activity_type_speed_walking, R.string.activity_type_trail_hiking, R.string.activity_type_walking};
-
-    // List of icons whose sports associated use speed (in km/h or mi/h).
-    private static final int[] SPEED_ICON = {
-            // All airplane categories.
-            R.string.activity_type_airplane, R.string.activity_type_commercial_airplane, R.string.activity_type_rc_airplane,
-            // All bike categories.
-            R.string.activity_type_biking, R.string.activity_type_cycling, R.string.activity_type_dirt_bike, R.string.activity_type_motor_bike, R.string.activity_type_mountain_biking, R.string.activity_type_road_biking, R.string.activity_type_track_cycling,
-            // All boat categories.
-            R.string.activity_type_boat, R.string.activity_type_ferry, R.string.activity_type_motor_boating, R.string.activity_type_rc_boat,
-            // All drive categories.
-            R.string.activity_type_atv, R.string.activity_type_driving, R.string.activity_type_driving_bus, R.string.activity_type_driving_car,
-
-    };
 
     private static final LinkedHashMap<String, Pair<Integer, Integer>> MAP = new LinkedHashMap<>();
 
     static {
         //Reflects order in ChooseActivityTypeDialogFragmentActivity
-        MAP.put(UNKNOWN, new Pair<>(R.string.activity_type_unknown, ACTIVITY_UNKNOWN_LOGO));
-        MAP.put(RUN, new Pair<>(R.string.activity_type_running, R.drawable.ic_activity_run_24dp));
-        MAP.put(WALK, new Pair<>(R.string.activity_type_walking, R.drawable.ic_activity_walk_24dp));
-        MAP.put(BIKE, new Pair<>(R.string.activity_type_biking, R.drawable.ic_activity_bike_24dp));
-        MAP.put(DRIVE, new Pair<>(R.string.activity_type_driving, R.drawable.ic_activity_drive_24dp));
+        MAP.put(ActivityTypeUtils.UNKNOWN, new Pair<>(R.string.activity_type_unknown, ACTIVITY_UNKNOWN_LOGO));
+        MAP.put(ActivityTypeUtils.RUN, new Pair<>(R.string.activity_type_running, R.drawable.ic_activity_run_24dp));
+        MAP.put(ActivityTypeUtils.WALK, new Pair<>(R.string.activity_type_walking, R.drawable.ic_activity_walk_24dp));
+        MAP.put(ActivityTypeUtils.BIKE, new Pair<>(R.string.activity_type_biking, R.drawable.ic_activity_bike_24dp));
+        MAP.put(ActivityTypeUtils.DRIVE, new Pair<>(R.string.activity_type_driving, R.drawable.ic_activity_drive_24dp));
         // TODO Need new icons
 //        MAP.put(SKI, new Pair<>(R.string.activity_type_skiing, R.drawable.ic_track_ski));
 //        MAP.put(SNOW_BOARDING, new Pair<>(R.string.activity_type_snow_boarding, R.drawable.ic_track_snow_boarding));
-        MAP.put(AIRPLANE, new Pair<>(R.string.activity_type_airplane, R.drawable.ic_activity_flight_24dp));
-        MAP.put(BOAT, new Pair<>(R.string.activity_type_boat, R.drawable.ic_activity_boat_24dp));
+        MAP.put(ActivityTypeUtils.AIRPLANE, new Pair<>(R.string.activity_type_airplane, R.drawable.ic_activity_flight_24dp));
+        MAP.put(ActivityTypeUtils.BOAT, new Pair<>(R.string.activity_type_boat, R.drawable.ic_activity_boat_24dp));
     }
 
     private TrackIconUtils() {
@@ -132,22 +100,22 @@ public class TrackIconUtils {
      */
     public static String getIconValue(Context context, String activityType) {
         if (activityType == null || activityType.equals("")) {
-            return UNKNOWN;
+            return ActivityTypeUtils.UNKNOWN;
         }
-        if (inList(context, activityType, AIRPLANE_LIST)) {
-            return AIRPLANE;
+        if (inList(context, activityType, ActivityTypeUtils.AIRPLANE_LIST)) {
+            return ActivityTypeUtils.AIRPLANE;
         }
-        if (inList(context, activityType, BIKE_LIST)) {
-            return BIKE;
+        if (inList(context, activityType, ActivityTypeUtils.BIKE_LIST)) {
+            return ActivityTypeUtils.BIKE;
         }
-        if (inList(context, activityType, BOAT_LIST)) {
-            return BOAT;
+        if (inList(context, activityType, ActivityTypeUtils.BOAT_LIST)) {
+            return ActivityTypeUtils.BOAT;
         }
-        if (inList(context, activityType, DRIVE_LIST)) {
-            return DRIVE;
+        if (inList(context, activityType, ActivityTypeUtils.DRIVE_LIST)) {
+            return ActivityTypeUtils.DRIVE;
         }
-        if (inList(context, activityType, RUN_LIST)) {
-            return RUN;
+        if (inList(context, activityType, ActivityTypeUtils.RUN_LIST)) {
+            return ActivityTypeUtils.RUN;
         }
 //        if (inList(context, activityType, SKI_LIST)) {
 //            return SKI;
@@ -155,10 +123,10 @@ public class TrackIconUtils {
 //        if (inList(context, activityType, SNOW_BOARDING_LIST)) {
 //            return SNOW_BOARDING;
 //        }
-        if (inList(context, activityType, WALK_LIST)) {
-            return WALK;
+        if (inList(context, activityType, ActivityTypeUtils.WALK_LIST)) {
+            return ActivityTypeUtils.WALK;
         }
-        return UNKNOWN;
+        return ActivityTypeUtils.UNKNOWN;
     }
 
     public static void setIconSpinner(Spinner spinner, String iconValue) {
@@ -204,15 +172,5 @@ public class TrackIconUtils {
             }
         }
         return false;
-    }
-
-    /**
-     * Returns true if category is in the SPEED_ICON array. Otherwise returns false.
-     *
-     * @param context  the context.
-     * @param category the name of the category, activity type.
-     */
-    public static boolean isSpeedIcon(Context context, String category) {
-        return inList(context, category, SPEED_ICON);
     }
 }
