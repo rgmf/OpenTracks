@@ -354,6 +354,7 @@ public class TrackRecordingService extends Service {
 
     /**
      * Resumes the track identified by trackId.
+     * It results in a pause/continue.
      *
      * @param trackId
      */
@@ -364,13 +365,52 @@ public class TrackRecordingService extends Service {
             return;
         }
 
+        // Sync the real time setting the stop time with current time.
         track.getTripStatistics().setStopTime(System.currentTimeMillis());
         trackTripStatisticsUpdater = new TripStatisticsUpdater(track.getTripStatistics());
+
+        // Update database for pause.
+        updateDatabaseForPause(track);
+
+        // Update database for resume.
+        updateDatabaseForResume(track);
 
         // Update shared preferences
         updateRecordingState(trackId, false);
 
         startRecording();
+    }
+
+    /**
+     * Updates the database to adds an special track point to mark the point where user pause the track.
+     *
+     * @param track The track where the track point will be add.
+     */
+    private void updateDatabaseForPause(Track track) {
+        if (track != null) {
+            insertLocation(track, lastLocation, getLastValidTrackPointInCurrentSegment(track.getId()));
+
+            Location pause = new Location(LocationManager.GPS_PROVIDER);
+            pause.setLongitude(0);
+            pause.setLatitude(TrackPointsColumns.PAUSE_LATITUDE);
+            pause.setTime(System.currentTimeMillis());
+            insertLocation(track, pause, null);
+        }
+    }
+
+    /**
+     * Updates the database to adds an special track point to mark the point where user continue the track.
+     *
+     * @param track The track where the track point will be add.
+     */
+    private void updateDatabaseForResume(Track track) {
+        if (track != null) {
+            Location resume = new Location(LocationManager.GPS_PROVIDER);
+            resume.setLongitude(0);
+            resume.setLatitude(TrackPointsColumns.RESUME_LATITUDE);
+            resume.setTime(System.currentTimeMillis());
+            insertLocation(track, resume, null);
+        }
     }
 
     private void restartTrack(Track track) {
@@ -399,13 +439,7 @@ public class TrackRecordingService extends Service {
 
         // Update database
         Track track = contentProviderUtils.getTrack(recordingTrackId);
-        if (track != null) {
-            Location resume = new Location(LocationManager.GPS_PROVIDER);
-            resume.setLongitude(0);
-            resume.setLatitude(TrackPointsColumns.RESUME_LATITUDE);
-            resume.setTime(System.currentTimeMillis());
-            insertLocation(track, resume, null);
-        }
+        updateDatabaseForResume(track);
 
         startRecording();
     }
@@ -484,15 +518,7 @@ public class TrackRecordingService extends Service {
 
         // Update database
         Track track = contentProviderUtils.getTrack(recordingTrackId);
-        if (track != null) {
-            insertLocation(track, lastLocation, getLastValidTrackPointInCurrentSegment(track.getId()));
-
-            Location pause = new Location(LocationManager.GPS_PROVIDER);
-            pause.setLongitude(0);
-            pause.setLatitude(TrackPointsColumns.PAUSE_LATITUDE);
-            pause.setTime(System.currentTimeMillis());
-            insertLocation(track, pause, null);
-        }
+        updateDatabaseForPause(track);
 
         endRecording(false);
 
